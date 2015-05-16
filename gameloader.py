@@ -20,7 +20,11 @@ class GameLoader(object):
             games = json.load(gamelist_data)
 
         for game_json in games:
-            game = Game(game_json['url'], game_json['start_file'])
+            start_directory = None
+            if 'start_directory' in game_json:
+                start_directory = game_json['start_directory']
+
+            game = Game(game_json['url'], game_json['start_file'], start_directory)
             self.games.append(game)
             print(game.local_repo)
             try:

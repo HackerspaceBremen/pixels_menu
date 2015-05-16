@@ -7,6 +7,7 @@ from threading import Thread
 from gameloader import GameLoader
 from constants import *
 from displayers import TextDisplayer
+from game_starter import GameStarter
 
 
 
@@ -160,8 +161,8 @@ class Menu(object):
             games_menu.increment()
             self.update_game_info_section()
         elif event.key == KEY_ENTER:
-            game = games_menu.selected_entry
-            pass
+            game = games_menu.selected_entry()
+            GameStarter(game).start()
 
     def check_events_for_game_info_menu(self, event):
         game_info_menu = self.get_menu_section_from_name('game_info')
