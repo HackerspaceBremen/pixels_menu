@@ -12,6 +12,9 @@ class GameStarter(object):
         dir = self.game.local_repo
         if self.game.start_directory is not None:
             dir = os.path.join(self.game.local_repo,self.game.start_directory)
-        exec_cmd = "cd " + dir + " ; python "+self.game.start_file
+        seperator = ";"
+        if os.name == "nt":
+            seperator = " &"
+        exec_cmd = "cd " + dir + seperator + " python "+self.game.start_file
         print(exec_cmd)
         self.game = subprocess.Popen(exec_cmd, shell=True)
