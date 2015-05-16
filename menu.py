@@ -150,7 +150,7 @@ class Menu(object):
         elif event.key == KEY_RIGHT:
             games_menu.increment()
         elif event.key == KEY_ENTER:
-            game = games_menu.selected_entry
+            game = games_menu.selected_entry()
             GameStarter(game).start()
 
 

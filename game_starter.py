@@ -1,3 +1,6 @@
+import os
+import subprocess
+
 from game import Game
 
 class GameStarter(object):
@@ -6,7 +9,9 @@ class GameStarter(object):
         self.game = game
 
     def start(self):
-        if self.game is not None:
-            os.killpg(self.game.pid,signal.SIGTERM)
-        exec_cmd = "cd "+game.local_repo+"; python "+game.start_file
-        self.game = subprocess.Popen(exec_cmd, shell=True, preexec_fn=os.setsid)
+        dir = self.game.local_repo
+        if self.game.start_directory is not None:
+            dir = os.path.join(self.game.local_repo,self.game.start_directory)
+        exec_cmd = "cd "+ dir+" & python "+self.game.start_file
+        print(exec_cmd)
+        self.game = subprocess.Popen(exec_cmd, shell=True)
