@@ -64,10 +64,9 @@ class Menu(object):
         system_section = MenuSection('system', system_entries)
 
         games_section = MenuSection('games', self.games)
-        game_info_section = MenuSection
         self.menu_sections.append(system_section)
         self.menu_sections.append(games_section)
-        self.menu_sections.append(game_info_section)
+        #self.menu_sections.append(game_info_section)
 
         self.create_menu_dict()
 
@@ -79,8 +78,13 @@ class Menu(object):
         return self.menu_sections[self.menu_section_dict[name]]
 
     def update_game_info_section(self):
-        self.menu_sections.pop()
-        MenuSection('game_info', )
+        game_info_section_index = self.menu_section_dict['game_info']
+        game_info_section = self.get_menu_section_from_name('game_info')
+
+        games_menu = self.get_menu_section_from_name('games')
+
+
+        #self.menu_sections[game_info_section_index] =
 
     def display_menu(self):
         first = True
