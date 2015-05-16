@@ -18,7 +18,10 @@ class Menu(object):
         self.clock = pygame.time.Clock()
         self.displays = []
         self.games = None
-        self.menu_index = 0
+        self.game_index = 0
+        self.menu_sections = []
+        self.menu_section_dict = {}
+        self.menu_section_index = 1
 
     def init_displays(self):
         pygame.init()
@@ -40,15 +43,40 @@ class Menu(object):
             self.update_displays()
         self.games = gameloader.games
 
+    def init_menus(self):
+        system_entries = ['Quit', 'Version']
+        system_section = MenuSection('system', system_entries)
+
+        games_section = MenuSection('games', self.games)
+        self.menu_sections.append(system_section)
+        self.menu_sections.append(games_section)
+
+        self.menu_section_dict['system'] = 0
+        self.menu_section_dict['games'] = 1
+
 
     def display_menu(self):
         first = True
         while True:
             if first or self.check_keyboard_event():
-                game = self.games[self.menu_index]
-                TextDisplayer(self.pixel_surface).display_text(game.name)
+                if self.menu_section_index == self.menu_section_dict['system']:
+                    self.display_system_menu()
+                elif self.menu_section_index == self.menu_section_dict['games']:
+                    self.display_games()
+
                 self.update_displays()
                 first = False
+
+    def display_games(self):
+        games_menu = self.menu_sections[self.menu_section_dict['games']]
+        TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name)
+
+    def display_game_info(self):
+        TextDisplayer(self.pixel_surface).display_text("game info")
+
+    def display_system_menu(self):
+        system_menu = self.menu_sections[self.menu_section_dict['system']]
+        TextDisplayer(self.pixel_surface).display_text(system_menu.selected_entry())
 
     def update_displays(self):
         for display in self.displays:
@@ -63,15 +91,61 @@ class Menu(object):
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYDOWN:
-                if event.key == KEY_LEFT:
-                    self.menu_index -= 1
-                    if self.menu_index < 0:
-                        self.menu_index = len(self.games)-1
-                elif event.key == KEY_RIGHT:
-                    self.menu_index += 1
-                    if self.menu_index > len(self.games)-1:
-                        self.menu_index = 0
+                if self.menu_sections[self.menu_section_index].name == 'system':
+                        self.check_events_for_system_menu(event)
+                elif self.menu_sections[self.menu_section_index].name == 'games':
+                        self.check_events_for_games_menu(event)
+
+                self.check_events_for_all(event)
+
         return event_received
+
+    def check_events_for_system_menu(self, event):
+        pass
+
+    def check_events_for_games_menu(self, event):
+        games_menu = self.menu_sections[self.menu_section_dict['games']]
+        if event.key == KEY_LEFT:
+            games_menu.decrement()
+            print games_menu.index
+        elif event.key == KEY_RIGHT:
+            games_menu.increment()
+            print games_menu.index
+
+    def check_events_for_game_info_menu(self, event):
+        pass
+
+    def check_events_for_all(self, event):
+        if event.key == KEY_DOWN:
+            self.menu_section_index -= 1
+            if self.menu_section_index < 0:
+                self.menu_section_index = len(self.menu_sections)-1
+        elif event.key == KEY_UP:
+            self.menu_section_index += 1
+            if self.menu_section_index > len(self.menu_sections)-1:
+                self.menu_section_index = 0
+
+    def get_menu_from_name(self, name):
+        return self.menu_sections[self.menu_section_dict[name]]
+
+class MenuSection(object):
+    def __init__(self, name, entries):
+        self.entries = entries
+        self.index = 0
+        self.name = name
+
+    def increment(self):
+        self.index += 1
+        if self.index > len(self.entries)-1:
+            self.index = 0
+
+    def decrement(self):
+        self.index -= 1
+        if self.index < 0:
+            self.index = len(self.entries)-1
+
+    def selected_entry(self):
+        return self.entries[self.index]
 
 
 def main():
@@ -81,6 +155,7 @@ def main():
         menu = Menu()
     menu.init_displays()
     menu.load_games()
+    menu.init_menus()
     menu.display_menu()
 
 if __name__ == "__main__":
