@@ -11,8 +11,10 @@ class Game(object):
         self.theme_color = "#ffffff"
         self.game_info = []
         self.start_directory = start_directory
+        self.update_game_info()
 
-    def create_game_info(self):
+    def update_game_info(self):
+        self.game_info = []
         self.game_info.append('Author='+self.author)
         self.game_info.append('Name='+self.name)
 

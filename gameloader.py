@@ -48,5 +48,6 @@ class GameLoader(object):
                     game.name = pixels_info['name']
                     game.author = pixels_info['author']
                     game.theme_color = pixels_info['theme_color']
+                    game.update_game_info()
             except IOError:
                 print("pixels_info.json not found for '"+game.local_repo+"'")
