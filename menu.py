@@ -27,6 +27,7 @@ class Menu(object):
         if self.display_device is not None:
             self.displays.append(led.teensy.TeensyDisplay(self.display_device))
         self.displays.append(led.sim.SimDisplay(display_size))
+        self.displays.append(led.dsclient.DisplayServerClientDisplay('localhost', 8123))
         self.pixel_surface = pygame.Surface(display_size)
 
     def load_games(self):
