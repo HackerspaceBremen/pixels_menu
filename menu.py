@@ -1,11 +1,13 @@
 import sys
 import pygame
 import led
-import time
 
-# from pygame.locals import *
 from threading import Thread
-from git import Repo
+
+from gameloader import GameLoader
+from constants import *
+from displayers import TextDisplayer
+
 
 
 class Menu(object):
@@ -15,6 +17,8 @@ class Menu(object):
         self.pixel_surface = None
         self.clock = pygame.time.Clock()
         self.displays = []
+        self.games = None
+        self.menu_index = 0
 
     def init_displays(self):
         pygame.init()
@@ -30,41 +34,44 @@ class Menu(object):
         t = Thread(target=gameloader.load_games)
         t.start()
 
-        display_text = DisplayText(self.pixel_surface)
-        while t.is_alive:
+        display_text = TextDisplayer(self.pixel_surface)
+        while not gameloader.games_loaded:
             display_text.display_text("Loading ...")
             self.update_displays()
+        self.games = gameloader.games
+
+
+    def display_menu(self):
+        first = True
+        while True:
+            if first or self.check_keyboard_event():
+                game = self.games[self.menu_index]
+                TextDisplayer(self.pixel_surface).display_text(game.name)
+                self.update_displays()
+                first = False
 
     def update_displays(self):
         for display in self.displays:
             display.update(self.pixel_surface)
         self.clock.tick(30)
 
-
-class DisplayText(object):
-    def __init__(self, pixel_surface):
-        self.font = pygame.font.SysFont("Arial", 12)
-        self.pixel_surface = pixel_surface
-
-    def display_text(self, text, color="#ffffff"):
-        message = self.font.render(text, True, pygame.Color(color))
-        self.pixel_surface.fill(pygame.Color(0, 0, 0))
-        self.pixel_surface.blit(message, message.get_rect())
-
-
-class GameLoader(object):
-    def __init__(self):
-        #self.menu_repo = Repo()
-
-    def load_games(self):
-        time.sleep(10)
-        # TODO git pull game list
-        # TODO for each entry
-            # clone --depth=1
-            # OR pull if game already exists
-            # OR throw away old games
-
-    def refresh_game_list(self):
+    def check_keyboard_event(self):
+        event_received = False
+        for event in pygame.event.get():
+            event_received = True
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == KEYDOWN:
+                if event.key == KEY_LEFT:
+                    self.menu_index -= 1
+                    if self.menu_index < 0:
+                        self.menu_index = len(self.games)-1
+                elif event.key == KEY_RIGHT:
+                    self.menu_index += 1
+                    if self.menu_index > len(self.games)-1:
+                        self.menu_index = 0
+        return event_received
 
 
 def main():
@@ -74,8 +81,7 @@ def main():
         menu = Menu()
     menu.init_displays()
     menu.load_games()
-    #menu.displayMenu()
-    #menu.start_event_loop()
+    menu.display_menu()
 
 if __name__ == "__main__":
     main()

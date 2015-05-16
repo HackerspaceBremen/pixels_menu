@@ -1,0 +1,5 @@
+[
+  {"url":"https://github.com/michaelkoetter/pygame-ledpixels", "start_file":"samples/shooter.py", "name":"Shooter"},
+  {"url":"https://github.com/michaelkoetter/pygame-ledpixels", "start_file":"samples/test1.py"},
+  {"url":"https://github.com/michaelkoetter/pong-ledpixels", "start_file":"pong.py"}
+]
