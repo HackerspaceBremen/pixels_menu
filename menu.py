@@ -55,7 +55,7 @@ class Menu(object):
         while True:
             if first or self.check_keyboard_event():
                 game = self.games[self.menu_index]
-                TextDisplayer(self.pixel_surface).display_text(game.name)
+                TextDisplayer(self.pixel_surface).display_menu_entry(game.name, game.theme_color)
                 self.update_displays()
                 first = False
 

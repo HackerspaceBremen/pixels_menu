@@ -14,3 +14,5 @@ class TextDisplayer(object):
         text = "Loading "+point_amount*"."
         self.display_text(text)
 
+    def display_menu_entry(self, text, color="#ffffff", left_entry_color="#ffffff", right_entry_color="#ffffff"):
+        self.display_text(text, color)
