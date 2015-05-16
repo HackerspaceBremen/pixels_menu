@@ -62,13 +62,14 @@ class Menu(object):
     def init_menus(self):
         system_entries = ['Quit', 'Version']
         system_section = MenuSection('system', system_entries)
-
+        game_info_section = MenuSection('game_info', [])
         games_section = MenuSection('games', self.games)
         self.menu_sections.append(system_section)
         self.menu_sections.append(games_section)
-        #self.menu_sections.append(game_info_section)
+        self.menu_sections.append(game_info_section)
 
         self.create_menu_dict()
+        self.update_game_info_section()
 
     def create_menu_dict(self):
         for index, section in enumerate(self.menu_sections):
@@ -79,12 +80,11 @@ class Menu(object):
 
     def update_game_info_section(self):
         game_info_section_index = self.menu_section_dict['game_info']
-        game_info_section = self.get_menu_section_from_name('game_info')
 
         games_menu = self.get_menu_section_from_name('games')
-
-
-        #self.menu_sections[game_info_section_index] =
+        game = games_menu.selected_entry()
+        game_info_section = MenuSection('game_info', game.game_info)
+        self.menu_sections[game_info_section_index] = game_info_section
 
     def display_menu(self):
         first = True
@@ -94,6 +94,8 @@ class Menu(object):
                     self.display_system_menu()
                 elif self.menu_section_index == self.menu_section_dict['games']:
                     self.display_games()
+                elif self.menu_section_index == self.menu_section_dict['game_info']:
+                    self.display_game_info()
 
                 self.update_displays()
                 first = False
@@ -107,7 +109,8 @@ class Menu(object):
             TextDisplayer(self.pixel_surface).display_menu_entry(games_menu.selected_entry().name)
 
     def display_game_info(self):
-        TextDisplayer(self.pixel_surface).display_menu_entry("game info")
+        game_info_menu = self.get_menu_section_from_name('game_info')
+        TextDisplayer(self.pixel_surface).display_menu_entry(game_info_menu.selected_entry())
 
     def display_system_menu(self):
         system_menu = self.get_menu_section_from_name('system')
@@ -130,6 +133,8 @@ class Menu(object):
                         self.check_events_for_system_menu(event)
                 elif self.menu_sections[self.menu_section_index].name == 'games':
                         self.check_events_for_games_menu(event)
+                elif self.menu_sections[self.menu_section_index].name == 'game_info':
+                        self.check_events_for_game_info_menu(event)
 
                 self.check_events_for_all(event)
 
@@ -141,31 +146,40 @@ class Menu(object):
             system_menu.decrement()
         elif event.key == KEY_RIGHT:
             system_menu.increment()
+        elif event.key == KEY_ENTER:
+            print(system_menu.selected_entry())
+            if system_menu.selected_entry() == 'Quit':
+                sys.exit()
 
     def check_events_for_games_menu(self, event):
         games_menu = self.get_menu_section_from_name('games')
         if event.key == KEY_LEFT:
             games_menu.decrement()
+            self.update_game_info_section()
         elif event.key == KEY_RIGHT:
             games_menu.increment()
+            self.update_game_info_section()
         elif event.key == KEY_ENTER:
             game = games_menu.selected_entry
             pass
 
-
-
     def check_events_for_game_info_menu(self, event):
-        pass
+        game_info_menu = self.get_menu_section_from_name('game_info')
+        if event.key == KEY_LEFT:
+            game_info_menu.decrement()
+        elif event.key == KEY_RIGHT:
+            game_info_menu.increment()
 
     def check_events_for_all(self, event):
-        if event.key == KEY_DOWN:
+        if event.key == KEY_UP:
             self.menu_section_index -= 1
             if self.menu_section_index < 0:
-                self.menu_section_index = len(self.menu_sections)-1
-        elif event.key == KEY_UP:
+                self.menu_section_index = 0
+        elif event.key == KEY_DOWN:
             self.menu_section_index += 1
             if self.menu_section_index > len(self.menu_sections)-1:
-                self.menu_section_index = 0
+                self.menu_section_index = len(self.menu_sections)-1
+
 
 
 class MenuSection(object):

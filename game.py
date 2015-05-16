@@ -10,8 +10,10 @@ class Game(object):
         self.author = "Unknown"
         self.theme_color = "#ffffff"
         self.game_info = []
+        self.update_game_info()
 
-    def create_game_info(self):
+    def update_game_info(self):
+        self.game_info = []
         self.game_info.append('Author='+self.author)
         self.game_info.append('Name='+self.name)
 
