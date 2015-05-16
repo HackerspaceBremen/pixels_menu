@@ -85,7 +85,12 @@ class Menu(object):
 
     def display_games(self):
         games_menu = self.menu_sections[self.menu_section_dict['games']]
-        TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name, games_menu.selected_entry().theme_color)
+        games_color = games_menu.selected_entry().theme_color
+        if games_color is not None:
+            print games_color
+            TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name, games_color)
+        else:
+            TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name)
 
     def display_game_info(self):
         TextDisplayer(self.pixel_surface).display_text("game info")
