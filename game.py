@@ -9,4 +9,9 @@ class Game(object):
         self.name = start_file
         self.author = "Unknown"
         self.theme_color = "#ffffff"
+        self.game_info = []
+
+    def create_game_info(self):
+        self.game_info.append('Author='+self.author)
+        self.game_info.append('Name='+self.name)
 

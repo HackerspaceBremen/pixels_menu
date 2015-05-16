@@ -64,8 +64,10 @@ class Menu(object):
         system_section = MenuSection('system', system_entries)
 
         games_section = MenuSection('games', self.games)
+        game_info_section = MenuSection
         self.menu_sections.append(system_section)
         self.menu_sections.append(games_section)
+        self.menu_sections.append(game_info_section)
 
         self.create_menu_dict()
 
@@ -75,6 +77,10 @@ class Menu(object):
 
     def get_menu_section_from_name(self, name):
         return self.menu_sections[self.menu_section_dict[name]]
+
+    def update_game_info_section(self):
+        self.menu_sections.pop()
+        MenuSection('game_info', )
 
     def display_menu(self):
         first = True
@@ -138,6 +144,11 @@ class Menu(object):
             games_menu.decrement()
         elif event.key == KEY_RIGHT:
             games_menu.increment()
+        elif event.key == KEY_ENTER:
+            game = games_menu.selected_entry
+            pass
+
+
 
     def check_events_for_game_info_menu(self, event):
         pass
