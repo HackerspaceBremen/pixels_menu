@@ -30,6 +30,7 @@ class Menu(object):
         if self.display_device is not None:
             self.displays.append(led.teensy.TeensyDisplay(self.display_device))
         self.displays.append(led.sim.SimDisplay(display_size))
+        self.displays.append(led.dsclient.DisplayServerClientDisplay('localhost', 8123))
         self.pixel_surface = pygame.Surface(display_size)
 
     def load_games(self):
@@ -38,8 +39,23 @@ class Menu(object):
         t.start()
 
         display_text = TextDisplayer(self.pixel_surface)
+        amount_of_dots = 1
+        time_counter = 0
         while not gameloader.games_loaded:
-            display_text.display_text("Loading ...")
+            cancel_loading = False
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        cancel_loading = True
+            if cancel_loading:
+                gameloader.stopp = True
+            display_text.display_loading(amount_of_dots)
+            time_counter += 1
+            if time_counter >= 14:
+                amount_of_dots += 1
+                if amount_of_dots > 15:
+                    amount_of_dots = 1
+                time_counter = 0
             self.update_displays()
         self.games = gameloader.games
 
@@ -69,7 +85,7 @@ class Menu(object):
 
     def display_games(self):
         games_menu = self.menu_sections[self.menu_section_dict['games']]
-        TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name)
+        TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name, games_menu.selected_entry().theme_color)
 
     def display_game_info(self):
         TextDisplayer(self.pixel_surface).display_text("game info")

@@ -9,6 +9,7 @@ class GameLoader(object):
     def __init__(self):
         self.games = []
         self.games_loaded = False
+        self.stopp = False
 
     def load_games(self):
         self.load_game_data()
@@ -23,9 +24,10 @@ class GameLoader(object):
             self.games.append(game)
             print(game.local_repo)
             try:
-                repo = Repo(game.local_repo)
-                repo.remotes.origin.pull()
-                print("Done ... PULL")
+                if not self.stopp:
+                    repo = Repo(game.local_repo)
+                    repo.remotes.origin.pull()
+                    print("Done ... PULL")
             except NoSuchPathError:
                 Repo.clone_from(game.url, game.local_repo)
                 print("Done ... CHECKOUT")

@@ -1,5 +1,8 @@
 [
   {"url":"https://github.com/michaelkoetter/pygame-ledpixels", "start_file":"samples/shooter.py", "name":"Shooter"},
   {"url":"https://github.com/michaelkoetter/pygame-ledpixels", "start_file":"samples/test1.py"},
-  {"url":"https://github.com/michaelkoetter/pong-ledpixels", "start_file":"pong.py"}
+  {"url":"https://github.com/michaelkoetter/pong-ledpixels", "start_file":"pong.py"},
+  {"url":"https://github.com/Syralist/pixels_flappy", "start_file":"flappy/flappy.py"},
+  {"url":"https://github.com/Syralist/pixels_snake", "start_file":"snake/snake.py"},
+  {"url":"https://github.com/jh0ker/pixels_towerdefense", "start_file":"td.py"}
 ]
