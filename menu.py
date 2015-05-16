@@ -88,16 +88,16 @@ class Menu(object):
         games_color = games_menu.selected_entry().theme_color
         if games_color is not None:
             print games_color
-            TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name, games_color)
+            TextDisplayer(self.pixel_surface).display_menu_entry(games_menu.selected_entry().name, games_color)
         else:
-            TextDisplayer(self.pixel_surface).display_text(games_menu.selected_entry().name)
+            TextDisplayer(self.pixel_surface).display_menu_entry(games_menu.selected_entry().name)
 
     def display_game_info(self):
-        TextDisplayer(self.pixel_surface).display_text("game info")
+        TextDisplayer(self.pixel_surface).display_menu_entry("game info")
 
     def display_system_menu(self):
         system_menu = self.menu_sections[self.menu_section_dict['system']]
-        TextDisplayer(self.pixel_surface).display_text(system_menu.selected_entry())
+        TextDisplayer(self.pixel_surface).display_menu_entry(system_menu.selected_entry())
 
     def update_displays(self):
         for display in self.displays:
