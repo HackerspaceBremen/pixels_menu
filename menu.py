@@ -67,9 +67,14 @@ class Menu(object):
         self.menu_sections.append(system_section)
         self.menu_sections.append(games_section)
 
-        self.menu_section_dict['system'] = 0
-        self.menu_section_dict['games'] = 1
+        self.create_menu_dict()
 
+    def create_menu_dict(self):
+        for index, section in enumerate(self.menu_sections):
+            self.menu_section_dict[section.name] = index
+
+    def get_menu_section_from_name(self, name):
+        return self.menu_sections[self.menu_section_dict[name]]
 
     def display_menu(self):
         first = True
@@ -84,10 +89,9 @@ class Menu(object):
                 first = False
 
     def display_games(self):
-        games_menu = self.menu_sections[self.menu_section_dict['games']]
+        games_menu = self.get_menu_section_from_name('games')
         games_color = games_menu.selected_entry().theme_color
         if games_color is not None:
-            print games_color
             TextDisplayer(self.pixel_surface).display_menu_entry(games_menu.selected_entry().name, games_color)
         else:
             TextDisplayer(self.pixel_surface).display_menu_entry(games_menu.selected_entry().name)
@@ -96,7 +100,7 @@ class Menu(object):
         TextDisplayer(self.pixel_surface).display_menu_entry("game info")
 
     def display_system_menu(self):
-        system_menu = self.menu_sections[self.menu_section_dict['system']]
+        system_menu = self.get_menu_section_from_name('system')
         TextDisplayer(self.pixel_surface).display_menu_entry(system_menu.selected_entry())
 
     def update_displays(self):
@@ -122,16 +126,18 @@ class Menu(object):
         return event_received
 
     def check_events_for_system_menu(self, event):
-        pass
+        system_menu = self.get_menu_section_from_name('system')
+        if event.key == KEY_LEFT:
+            system_menu.decrement()
+        elif event.key == KEY_RIGHT:
+            system_menu.increment()
 
     def check_events_for_games_menu(self, event):
-        games_menu = self.menu_sections[self.menu_section_dict['games']]
+        games_menu = self.get_menu_section_from_name('games')
         if event.key == KEY_LEFT:
             games_menu.decrement()
-            print games_menu.index
         elif event.key == KEY_RIGHT:
             games_menu.increment()
-            print games_menu.index
 
     def check_events_for_game_info_menu(self, event):
         pass
@@ -146,8 +152,6 @@ class Menu(object):
             if self.menu_section_index > len(self.menu_sections)-1:
                 self.menu_section_index = 0
 
-    def get_menu_from_name(self, name):
-        return self.menu_sections[self.menu_section_dict[name]]
 
 class MenuSection(object):
     def __init__(self, name, entries):

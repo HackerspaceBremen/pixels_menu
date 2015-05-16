@@ -9,7 +9,7 @@ class TextDisplayer(object):
         self.pixel_surface.fill(pygame.Color(0, 0, 0))
 
     def display_text(self, text, color="#ffffff"):
-        message = self.font.render(text, True, pygame.Color(color))
+        message = self.font.render(text, True, pygame.Color(str(color)))
         self.pixel_surface.blit(message, message.get_rect())
 
     def display_loading(self, point_amount):
