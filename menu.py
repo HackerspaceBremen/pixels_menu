@@ -39,6 +39,13 @@ class Menu(object):
         amount_of_dots = 1
         time_counter = 0
         while not gameloader.games_loaded:
+            cancel_loading = False
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    if event.key == K_ESCAPE:
+                        cancel_loading = True
+            if cancel_loading:
+                gameloader.stopp = True
             display_text.display_loading(amount_of_dots)
             time_counter += 1
             if time_counter >= 14:
