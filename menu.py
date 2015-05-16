@@ -36,8 +36,16 @@ class Menu(object):
         t.start()
 
         display_text = TextDisplayer(self.pixel_surface)
+        amount_of_dots = 1
+        time_counter = 0
         while not gameloader.games_loaded:
-            display_text.display_text("Loading ...")
+            display_text.display_loading(amount_of_dots)
+            time_counter += 1
+            if time_counter >= 14:
+                amount_of_dots += 1
+                if amount_of_dots > 15:
+                    amount_of_dots = 1
+                time_counter = 0
             self.update_displays()
         self.games = gameloader.games
 
