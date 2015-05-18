@@ -30,7 +30,10 @@ class GameLoader(object):
             try:
                 if not self.stopp:
                     repo = Repo(game.local_repo)
-                    repo.remotes.origin.pull()
+                    try:
+                        repo.remotes.origin.pull()
+                    except AssertionError:
+                        print("Ooops ... something wen't wrong while pulling")
                     print("Done ... PULL")
             except NoSuchPathError:
                 Repo.clone_from(game.url, game.local_repo)
