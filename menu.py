@@ -186,10 +186,10 @@ class Menu(object):
 
     def enter(self, event_type, event):
         enters = False
-        add_info = ""
-        if event_type == 3:
-            add_info = event.button
-        print("typ: " + event_type + "; " + add_info)
+        #add_info = ""
+        #if event_type == 3:
+        #    add_info = event.button
+        #print("typ: " + event_type + "; " + add_info)
         if(event_type == 1 and (event.key == KEY_ENTER or event.key == K_SPACE)) or (event_type == 3 and event.button == 1):
             enters = True
         return enters
