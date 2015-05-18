@@ -147,7 +147,7 @@ class Menu(object):
                 event_type = 1
             elif event.type == JOYAXISMOTION and event.value != 0:
                 event_type = 2
-            elif event_type == JOYBUTTONDOWN:
+            elif event.type == JOYBUTTONDOWN:
                 event_type = 3
             if event_type is not None:
                 if self.menu_sections[self.menu_section_index].name == 'system':
