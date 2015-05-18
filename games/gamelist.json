@@ -4,5 +4,6 @@
   {"url":"https://github.com/michaelkoetter/pong-ledpixels", "start_file":"pong.py"},
   {"url":"https://github.com/Syralist/pixels_flappy", "start_directory":"flappy", "start_file":"flappy.py"},
   {"url":"https://github.com/Syralist/pixels_snake", "start_file":"snake/snake.py"},
-  {"url":"https://github.com/jh0ker/pixels_towerdefense", "start_file":"td.py"}
+  {"url":"https://github.com/jh0ker/pixels_towerdefense", "start_file":"td.py"},
+  {"url":"https://github.com/hackerspacebremen/pixels_controllertest", "start_file": "main.py"}
 ]
