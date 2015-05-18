@@ -101,7 +101,14 @@ start() {
 #    fi
     cd $PIXELS_DIR/pixels_displayserver
     $NODE_BIN_DIR/npm install    
-
+    # Checkout Menu
+    if [ ! -d "$PIXELS_DIR/pixels_controller" ]; then
+        cd $PIXELS_DIR
+        git clone https://github.com/HackerspaceBremen/pixels_controller.git
+    else
+        cd $PIXELS_DIR/pixels_controller
+        git pull
+    fi
     # Checkout Menu
     if [ ! -d "$PIXELS_DIR/pixels_menu" ]; then
         cd $PIXELS_DIR
@@ -138,10 +145,22 @@ start() {
       --workingDir $WORKING_DIR \
       start $APPLICATION_PATH $APPLICATION_ARGS 2>&1 > /dev/null &
     RETVAL=$?
-
+    
+    cd $PIXELS_DIR/pixels_controller
+    sleep 20    
+    
+    forever \
+      --pidFile /var/run/pixels_controller.pid \
+      -a \
+      --minUptime $MIN_UPTIME \
+      --spinSleepTime $SPIN_SLEEP_TIME \
+      --workingDir $PIXELS_DIR/pixels_controller \
+      start python2.6 main.py 2>&1 > /dev/null &
+    
+    
     cd $PIXELS_DIR/pixels_menu
     sleep 20    
-    #python menu.py &
+    python menu.py &
 }
 
 stop() {
