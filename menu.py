@@ -28,6 +28,12 @@ class Menu(object):
 
     def init_displays(self, ds_ip, ds_port=8123, display_device=None, nosim=False):
         pygame.init()
+        pygame.joystick.init()
+
+        # Initialize first joystick
+        if pygame.joystick.get_count() > 0:
+            stick = pygame.joystick.Joystick(0)
+            stick.init()
         pygame.display.set_mode()
         if display_device is not None:
             self.displays.append(led.teensy.TeensyDisplay(display_device))
@@ -133,55 +139,91 @@ class Menu(object):
         event_received = False
         for event in pygame.event.get():
             event_received = True
+            event_type = None
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == KEYDOWN:
+                event_type = 1
+            elif event.type == JOYAXISMOTION and event.value != 0:
+                event_type = 2
+            elif event_type == JOYBUTTONDOWN:
+                event_type = 3
+            if event_type is not None:
                 if self.menu_sections[self.menu_section_index].name == 'system':
-                        self.check_events_for_system_menu(event)
+                        self.check_events_for_system_menu(event, event_type)
                 elif self.menu_sections[self.menu_section_index].name == 'games':
-                        self.check_events_for_games_menu(event)
+                        self.check_events_for_games_menu(event, event_type)
                 elif self.menu_sections[self.menu_section_index].name == 'game_info':
-                        self.check_events_for_game_info_menu(event)
+                        self.check_events_for_game_info_menu(event, event_type)
 
-                self.check_events_for_all(event)
-
+                self.check_events_for_all(event, event_type)
         return event_received
 
-    def check_events_for_system_menu(self, event):
+    def move_left(self, event_type, event):
+        moves_right = False
+        if(event_type == 1 and event.key == KEY_LEFT) or (event_type == 2 and event.axis == 0 and event.value < 0):
+            moves_right = True
+        return moves_right
+
+    def move_right(self, event_type, event):
+        moves_left = False
+        if(event_type == 1 and event.key == KEY_RIGHT) or (event_type == 2 and event.axis == 0 and event.value > 0):
+            moves_left = True
+        return moves_left
+
+    def move_up(self, event_type, event):
+        moves_up = False
+        if(event_type == 1 and event.key == KEY_UP) or (event_type == 2 and event.axis == 1 and event.value < 0):
+            moves_up = True
+        return moves_up
+
+    def move_down(self, event_type, event):
+        moves_down = False
+        if(event_type == 1 and event.key == KEY_DOWN) or (event_type == 2 and event.axis == 1 and event.value > 0):
+            moves_down = True
+        return moves_down
+
+    def enter(self, event_type, event):
+        enters = False
+        if(event_type == 1 and event.key == KEY_ENTER) or (event_type == 3 and event.button == 1):
+            enters = True
+        return enters
+
+    def check_events_for_system_menu(self, event, event_type):
         system_menu = self.get_menu_section_from_name('system')
-        if event.key == KEY_LEFT:
+        if self.move_left(event_type, event):
             system_menu.decrement()
-        elif event.key == KEY_RIGHT:
+        elif self.move_left(event_type, event):
             system_menu.increment()
-        elif event.key == KEY_ENTER:
+        elif self.enter(event_type, event):
             print(system_menu.selected_entry())
             if system_menu.selected_entry() == 'Quit':
                 sys.exit()
 
-    def check_events_for_games_menu(self, event):
+    def check_events_for_games_menu(self, event, event_type):
         games_menu = self.get_menu_section_from_name('games')
-        if event.key == KEY_LEFT:
+        if self.move_left(event_type, event):
             games_menu.decrement()
             self.update_game_info_section()
-        elif event.key == KEY_RIGHT:
+        elif self.move_right(event_type, event):
             games_menu.increment()
             self.update_game_info_section()
-        elif event.key == KEY_ENTER:
+        elif self.enter(event_type, event):
             game = games_menu.selected_entry()
             GameStarter(game).start()
 
-    def check_events_for_game_info_menu(self, event):
+    def check_events_for_game_info_menu(self, event, event_type):
         game_info_menu = self.get_menu_section_from_name('game_info')
-        if event.key == KEY_LEFT:
+        if self.move_left(event_type, event):
             game_info_menu.decrement()
-        elif event.key == KEY_RIGHT:
+        elif self.move_right(event_type, event):
             game_info_menu.increment()
 
-    def check_events_for_all(self, event):
-        if event.key == KEY_UP:
+    def check_events_for_all(self, event, event_type):
+        if self.move_up(event_type, event):
             self.select_previous_section()
-        elif event.key == KEY_DOWN:
+        elif self.move_down(event_type, event):
             self.select_next_section()
 
     def select_next_section(self):
