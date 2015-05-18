@@ -1,4 +1,4 @@
-import sys
+import sys, signal
 import getopt
 import pygame
 import led
@@ -257,6 +257,11 @@ class MenuSection(object):
         return self.entries[self.index]
 
 
+def signal_handler(signal, frame):
+  print 'Signal: {}'.format(signal)
+  pygame.quit()
+  sys.exit(0)
+
 def main(argv):
     display_device = None
     # set ds_ip to None to disable that the displayserver is used without passing an explizit cmdline parameter
@@ -277,7 +282,7 @@ def main(argv):
             ds_port = int(arg)
         elif opt in ('-d', '--device'):
             display_device = arg
-        elif opt == 'nosim':
+        elif opt == '--nosim':
             nosim = True
 
     menu = Menu()
@@ -285,6 +290,9 @@ def main(argv):
     menu.load_games()
     menu.init_menus()
     menu.display_menu()
+
+signal.signal(signal.SIGTERM, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
