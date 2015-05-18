@@ -162,31 +162,36 @@ class Menu(object):
 
     def move_left(self, event_type, event):
         moves_right = False
-        if(event_type == 1 and (event.key == KEY_LEFT or event.key == K_LEFT)) or (event_type == 2 and event.axis == 0 and event.value < 0):
+        if(event_type == 1 and (event.key == KEY_LEFT or event.key == K_LEFT)) \
+                or (event_type == 2 and event.axis == 0 and event.value < 0):
             moves_right = True
         return moves_right
 
     def move_right(self, event_type, event):
         moves_left = False
-        if(event_type == 1 and event.key == KEY_RIGHT or event.key == K_RIGHT) or (event_type == 2 and event.axis == 0 and event.value > 0):
+        if(event_type == 1 and (event.key == KEY_RIGHT or event.key == K_RIGHT)) \
+                or (event_type == 2 and event.axis == 0 and event.value > 0):
             moves_left = True
         return moves_left
 
     def move_up(self, event_type, event):
         moves_up = False
-        if(event_type == 1 and event.key == KEY_UP or event.key == K_UP) or (event_type == 2 and event.axis == 1 and event.value < 0):
+        if(event_type == 1 and (event.key == KEY_UP or event.key == K_UP)) \
+                or (event_type == 2 and event.axis == 1 and event.value < 0):
             moves_up = True
         return moves_up
 
     def move_down(self, event_type, event):
         moves_down = False
-        if(event_type == 1 and event.key == KEY_DOWN or event.key == K_DOWN) or (event_type == 2 and event.axis == 1 and event.value > 0):
+        if(event_type == 1 and (event.key == KEY_DOWN or event.key == K_DOWN)) \
+                or (event_type == 2 and event.axis == 1 and event.value > 0):
             moves_down = True
         return moves_down
 
     def enter(self, event_type, event):
         enters = False
-        if(event_type == 1 and (event.key == KEY_ENTER or event.key == K_SPACE)) or (event_type == 3 and event.button == 1):
+        if(event_type == 1 and (event.key == KEY_ENTER or event.key == K_SPACE)) \
+                or (event_type == 3 and event.button == 1):
             enters = True
         return enters
 
