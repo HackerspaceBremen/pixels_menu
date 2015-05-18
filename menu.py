@@ -217,6 +217,7 @@ class Menu(object):
         elif self.enter(event_type, event):
             game = games_menu.selected_entry()
             GameStarter(game).start()
+            pygame.event.clear()
 
     def check_events_for_game_info_menu(self, event, event_type):
         game_info_menu = self.get_menu_section_from_name('game_info')
