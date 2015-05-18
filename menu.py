@@ -26,14 +26,14 @@ class Menu(object):
         self.menu_section_dict = {}
         self.menu_section_index = 1
 
-    def init_displays(self, ds_ip, ds_port='8123', display_device=None, nosim=False):
+    def init_displays(self, ds_ip, ds_port=8123, display_device=None, nosim=False):
         pygame.init()
         pygame.display.set_mode()
         if display_device is not None:
             self.displays.append(led.teensy.TeensyDisplay(display_device))
         if not nosim:
             self.displays.append(led.sim.SimDisplay(DISPLAY_SIZE))
-        if ds_ip is None:
+        if ds_ip is not None:
             self.displays.append(led.dsclient.DisplayServerClientDisplay(ds_ip, ds_port))
         # TODO: change to Exception
         if self.displays is None:
@@ -219,11 +219,11 @@ def main(argv):
     display_device = None
     # set ds_ip to None to disable that the displayserver is used without passing an explizit cmdline parameter
     ds_ip = 'localhost'
-    ds_port = '8123'
+    ds_port = 8123
     nosim = False
 
     try:
-        opts, args = getopt.getopt(argv, "hipd", ['help', 'dsip=', 'dsport=', 'device=', 'nosim'])
+        opts, args = getopt.getopt(argv, "hi:p:d:", ['help', 'dsip=', 'dsport=', 'device=', 'nosim'])
     except getopt.GetoptError:
         sys.exit(2)
     for opt, arg in opts:
@@ -231,9 +231,9 @@ def main(argv):
             sys.exit()
         elif opt in ('-i', '--dsip'):
             ds_ip = arg
-        elif opt in ('--p', '--dsport'):
-            ds_port = arg
-        elif opt in ('--d', '--device'):
+        elif opt in ('-p', '--dsport'):
+            ds_port = int(arg)
+        elif opt in ('-d', '--device'):
             display_device = arg
         elif opt == 'nosim':
             nosim = True
