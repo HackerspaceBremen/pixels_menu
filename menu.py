@@ -235,7 +235,7 @@ def main(argv):
             ds_port = int(arg)
         elif opt in ('-d', '--device'):
             display_device = arg
-        elif opt == 'nosim':
+        elif opt == '--nosim':
             nosim = True
 
     menu = Menu()
