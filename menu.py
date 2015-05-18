@@ -1,4 +1,5 @@
 import sys
+import getopt
 import pygame
 import led
 
@@ -9,12 +10,13 @@ from constants import *
 from displayers import TextDisplayer
 from game_starter import GameStarter
 
+SPEED = 30
+LOADING_DOT_AMOUNT = 15
+DISPLAY_SIZE = (90, 20)
 
 
 class Menu(object):
-    def __init__(self, display_device=None):
-        self.speed = 30
-        self.display_device = display_device
+    def __init__(self):
         self.pixel_surface = None
         self.clock = pygame.time.Clock()
         self.displays = []
@@ -24,15 +26,20 @@ class Menu(object):
         self.menu_section_dict = {}
         self.menu_section_index = 1
 
-    def init_displays(self):
+    def init_displays(self, ds_ip, ds_port='8123', display_device=None, nosim=False):
         pygame.init()
         pygame.display.set_mode()
-        display_size = (90,20)
-        if self.display_device is not None:
-            self.displays.append(led.teensy.TeensyDisplay(self.display_device))
-        self.displays.append(led.sim.SimDisplay(display_size))
-        self.displays.append(led.dsclient.DisplayServerClientDisplay('localhost', 8123))
-        self.pixel_surface = pygame.Surface(display_size)
+        if display_device is not None:
+            self.displays.append(led.teensy.TeensyDisplay(display_device))
+        if not nosim:
+            self.displays.append(led.sim.SimDisplay(DISPLAY_SIZE))
+        if ds_ip is None:
+            self.displays.append(led.dsclient.DisplayServerClientDisplay(ds_ip, ds_port))
+        # TODO: change to Exception
+        if self.displays is None:
+            print("No Display specified")
+            sys.exit(2)
+        self.pixel_surface = pygame.Surface(DISPLAY_SIZE)
 
     def load_games(self):
         gameloader = GameLoader()
@@ -52,9 +59,9 @@ class Menu(object):
                 gameloader.stopp = True
             display_text.display_loading(amount_of_dots)
             time_counter += 1
-            if time_counter >= 14:
+            if time_counter >= LOADING_DOT_AMOUNT-1:
                 amount_of_dots += 1
-                if amount_of_dots > 15:
+                if amount_of_dots > LOADING_DOT_AMOUNT:
                     amount_of_dots = 1
                 time_counter = 0
             self.update_displays()
@@ -63,7 +70,7 @@ class Menu(object):
     def init_menus(self):
         system_entries = ['Quit', 'Version']
         system_section = MenuSection('system', system_entries)
-        game_info_section = MenuSection('game_info', [])
+        game_info_section = MenuSection('game_info', list())
         games_section = MenuSection('games', self.games)
         self.menu_sections.append(system_section)
         self.menu_sections.append(games_section)
@@ -173,14 +180,19 @@ class Menu(object):
 
     def check_events_for_all(self, event):
         if event.key == KEY_UP:
-            self.menu_section_index -= 1
-            if self.menu_section_index < 0:
-                self.menu_section_index = 0
+            self.select_previous_section()
         elif event.key == KEY_DOWN:
-            self.menu_section_index += 1
-            if self.menu_section_index > len(self.menu_sections)-1:
-                self.menu_section_index = len(self.menu_sections)-1
+            self.select_next_section()
 
+    def select_next_section(self):
+        self.menu_section_index += 1
+        if self.menu_section_index > len(self.menu_sections)-1:
+            self.menu_section_index = len(self.menu_sections)-1
+
+    def select_previous_section(self):
+        self.menu_section_index -= 1
+        if self.menu_section_index < 0:
+            self.menu_section_index = 0
 
 
 class MenuSection(object):
@@ -203,15 +215,34 @@ class MenuSection(object):
         return self.entries[self.index]
 
 
-def main():
-    if sys.argv.__len__() > 1:
-        menu = Menu(sys.argv[1])
-    else:
-        menu = Menu()
-    menu.init_displays()
+def main(argv):
+    display_device = None
+    # set ds_ip to None to disable that the displayserver is used without passing an explizit cmdline parameter
+    ds_ip = 'localhost'
+    ds_port = '8123'
+    nosim = False
+
+    try:
+        opts, args = getopt.getopt(argv, "hipd", ['help', 'dsip=', 'dsport=', 'device=', 'nosim'])
+    except getopt.GetoptError:
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ('-h', '--help'):
+            sys.exit()
+        elif opt in ('-i', '--dsip'):
+            ds_ip = arg
+        elif opt in ('--p', '--dsport'):
+            ds_port = arg
+        elif opt in ('--d', '--device'):
+            display_device = arg
+        elif opt == 'nosim':
+            nosim = True
+
+    menu = Menu()
+    menu.init_displays(display_device=display_device, ds_ip=ds_ip, ds_port=ds_port, nosim=nosim)
     menu.load_games()
     menu.init_menus()
     menu.display_menu()
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
