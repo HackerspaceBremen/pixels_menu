@@ -1,7 +1,8 @@
-import sys, signal
+import sys, signal, os
 import getopt
 import pygame
 import led
+import time
 
 from threading import Thread
 
@@ -13,6 +14,7 @@ from game_starter import GameStarter
 SPEED = 30
 LOADING_DOT_AMOUNT = 15
 DISPLAY_SIZE = (90, 20)
+TEST = False
 
 
 class Menu(object):
@@ -161,18 +163,18 @@ class Menu(object):
         return event_received
 
     def move_left(self, event_type, event):
-        moves_right = False
+        move_left = False
         if(event_type == 1 and (event.key == KEY_LEFT or event.key == K_LEFT)) \
                 or (event_type == 2 and event.axis == 0 and event.value < 0):
-            moves_right = True
-        return moves_right
+            move_left = True
+        return move_left
 
     def move_right(self, event_type, event):
-        moves_left = False
+        move_right = False
         if(event_type == 1 and (event.key == KEY_RIGHT or event.key == K_RIGHT)) \
                 or (event_type == 2 and event.axis == 0 and event.value > 0):
-            moves_left = True
-        return moves_left
+            move_right = True
+        return move_right
 
     def move_up(self, event_type, event):
         moves_up = False
@@ -204,7 +206,14 @@ class Menu(object):
         elif self.enter(event_type, event):
             print(system_menu.selected_entry())
             if system_menu.selected_entry() == 'Quit':
-                sys.exit()
+                TextDisplayer(self.pixel_surface).display_menu_entry('Bye, Bye =(')
+                self.update_displays()
+                time.sleep(2)
+                TextDisplayer(self.pixel_surface).clear_display()
+                if TEST:
+                    sys.exit()
+                else:
+                    os.system("shutdown -h now")
 
     def check_events_for_games_menu(self, event, event_type):
         games_menu = self.get_menu_section_from_name('games')
