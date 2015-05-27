@@ -76,7 +76,7 @@ class Menu(object):
         self.games = gameloader.games
 
     def init_menus(self):
-        system_entries = ['Quit', 'Version']
+        system_entries = ['Quit']
         system_section = MenuSection('system', system_entries)
         game_info_section = MenuSection('game_info', list())
         games_section = MenuSection('games', self.games)
