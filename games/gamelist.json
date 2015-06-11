@@ -2,9 +2,11 @@
   {"url":"https://github.com/Syralist/pixels_flappy", "start_directory":"flappy", "start_file":"flappy.py"},
   {"url":"https://github.com/jh0ker/pixels_towerdefense", "start_file":"td.py"},
   {"url":"https://github.com/Syralist/pixels_snake", "start_directory":"snake", "start_file":"snake.py"},
+  {"url":"https://github.com/jh0ker/pixels_curve", "start_file": "game.py"},
   {"url":"https://github.com/Syralist/pixels_gol", "start_file":"gol.py"},
   {"url":"https://github.com/michaelkoetter/pong-ledpixels", "start_file":"pong.py"},
   {"url":"https://github.com/michaelkoetter/pygame-ledpixels", "start_directory":"samples", "start_file":"shooter.py", "name":"Shooter"},
   {"url":"https://github.com/michaelkoetter/pygame-ledpixels", "start_directory":"samples", "start_file":"test1.py"},
   {"url":"https://github.com/hackerspacebremen/pixels_controllertest", "start_file": "main.py"}
+  {"url":"https://github.com/jh0ker/pixels_curve", "start_file": "game.py"}
 ]
