@@ -14,7 +14,7 @@ from game_starter import GameStarter
 SPEED = 30
 LOADING_DOT_AMOUNT = 15
 DISPLAY_SIZE = (90, 20)
-TEST = False
+TEST = True
 
 
 class Menu(object):
@@ -76,11 +76,11 @@ class Menu(object):
         self.games = gameloader.games
 
     def init_menus(self):
-        system_entries = ['Quit']
-        system_section = MenuSection('system', system_entries)
+        quit_entries = ['Quit', 'Really?', 'Yes']
+        quit_section = MenuSection('quit', quit_entries)
         game_info_section = MenuSection('game_info', list())
         games_section = MenuSection('games', self.games)
-        self.menu_sections.append(system_section)
+        self.menu_sections.append(quit_section)
         self.menu_sections.append(games_section)
         self.menu_sections.append(game_info_section)
 
@@ -106,8 +106,8 @@ class Menu(object):
         first = True
         while True:
             if first or self.check_keyboard_event():
-                if self.menu_section_index == self.menu_section_dict['system']:
-                    self.display_system_menu()
+                if self.menu_section_index == self.menu_section_dict['quit']:
+                    self.display_quit_menu()
                 elif self.menu_section_index == self.menu_section_dict['games']:
                     self.display_games()
                 elif self.menu_section_index == self.menu_section_dict['game_info']:
@@ -128,9 +128,9 @@ class Menu(object):
         game_info_menu = self.get_menu_section_from_name('game_info')
         TextDisplayer(self.pixel_surface).display_menu_entry(game_info_menu.selected_entry())
 
-    def display_system_menu(self):
-        system_menu = self.get_menu_section_from_name('system')
-        TextDisplayer(self.pixel_surface).display_menu_entry(system_menu.selected_entry())
+    def display_quit_menu(self):
+        quit_menu = self.get_menu_section_from_name('quit')
+        TextDisplayer(self.pixel_surface).display_menu_entry(quit_menu.selected_entry())
 
     def update_displays(self):
         for display in self.displays:
@@ -143,8 +143,7 @@ class Menu(object):
             event_received = True
             event_type = None
             if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+                self.quit()
             elif event.type == KEYDOWN:
                 event_type = 1
             elif event.type == JOYAXISMOTION and event.value != 0:
@@ -152,8 +151,8 @@ class Menu(object):
             elif event.type == JOYBUTTONDOWN:
                 event_type = 3
             if event_type is not None:
-                if self.menu_sections[self.menu_section_index].name == 'system':
-                        self.check_events_for_system_menu(event, event_type)
+                if self.menu_sections[self.menu_section_index].name == 'quit':
+                        self.check_events_for_quit_menu(event, event_type)
                 elif self.menu_sections[self.menu_section_index].name == 'games':
                         self.check_events_for_games_menu(event, event_type)
                 elif self.menu_sections[self.menu_section_index].name == 'game_info':
@@ -197,23 +196,17 @@ class Menu(object):
             enters = True
         return enters
 
-    def check_events_for_system_menu(self, event, event_type):
-        system_menu = self.get_menu_section_from_name('system')
-        if self.move_left(event_type, event):
-            system_menu.decrement()
-        elif self.move_left(event_type, event):
-            system_menu.increment()
-        elif self.enter(event_type, event):
-            print(system_menu.selected_entry())
-            if system_menu.selected_entry() == 'Quit':
-                TextDisplayer(self.pixel_surface).display_menu_entry('Bye, Bye =(')
-                self.update_displays()
-                time.sleep(2)
-                TextDisplayer(self.pixel_surface).clear_display()
-                if TEST:
-                    sys.exit()
-                else:
-                    os.system("shutdown -h now")
+    def check_events_for_quit_menu(self, event, event_type):
+        quit_menu = self.get_menu_section_from_name('quit')
+        if self.enter(event_type, event):
+            if quit_menu.selected_entry() == 'Quit':
+                quit_menu.increment()
+            elif quit_menu.selected_entry() == 'Really?':
+                quit_menu.increment()
+            elif quit_menu.selected_entry() == 'Yes':
+                self.quit()
+        elif self.move_down(event_type, event):
+            quit_menu.index = 0
 
     def check_events_for_games_menu(self, event, event_type):
         games_menu = self.get_menu_section_from_name('games')
@@ -250,6 +243,16 @@ class Menu(object):
         self.menu_section_index -= 1
         if self.menu_section_index < 0:
             self.menu_section_index = 0
+
+    def quit(self):
+        TextDisplayer(self.pixel_surface).display_menu_entry('Bye, Bye =(')
+        self.update_displays()
+        time.sleep(2)
+        TextDisplayer(self.pixel_surface).clear_display()
+        if TEST:
+            sys.exit()
+        else:
+            os.system("shutdown -h now")
 
 
 class MenuSection(object):
